@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"sync"
 
@@ -47,10 +48,15 @@ type Message struct {
 }
 
 func NewServer() *server {
+	host := os.Getenv("POSTGRES_HOST")
+	db := os.Getenv("POSTGRES_DB")
+	user := os.Getenv("POSTGRES_USER")
+	password := os.Getenv("POSTGRES_PASSWORD")
+
 	return &server{
 		conns:     make(map[string]*websocket.Conn),
 		broadcast: make(chan Message),
-		store:     postgresql.New("chechyotka", "5432", "localhost", "5432", "chat"),
+		store:     postgresql.New(user, password, host, "5432", db),
 	}
 }
 
